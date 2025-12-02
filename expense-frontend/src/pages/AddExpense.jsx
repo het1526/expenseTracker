@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createExpense } from "../services/expenses";
 
 export default function AddExpense() {
   const initial = {
@@ -16,21 +17,32 @@ export default function AddExpense() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    // simple validation
+
     if (!form.title.trim()) return setError("Title is required.");
     if (!form.amount || Number(form.amount) <= 0)
       return setError("Amount must be > 0.");
 
     setError("");
-    // for now just log — later we'll call createExpense(form)
-    console.log("Submitting expense:", {
-      ...form,
-      amount: Number(form.amount),
-    });
-    // reset form
-    setForm(initial);
+
+    try {
+      // call backend
+      const payload = { ...form, amount: Number(form.amount) };
+      const res = await createExpense(payload);
+
+      if (!res.data.ok) {
+        return setError(res.data.error || "Failed to add expense");
+      }
+
+      alert("Expense added!");
+
+      // redirect to expenses page
+      window.location.href = "/expenses";
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Something went wrong");
+    }
   }
 
   return (
