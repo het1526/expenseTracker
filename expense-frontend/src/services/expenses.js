@@ -12,3 +12,6 @@ export const createExpense = (payload) => API.post("/expenses", payload);
 export const updateExpense = (id, payload) =>
   API.put(`/expenses/${id}`, payload);
 export const deleteExpense = (id) => API.delete(`/expenses/${id}`);
+// get monthly summary for dashboard
+export const getMonthlySummary = () => API.get("/expenses/summary/monthly");
+export const getRecentExpenses = () => API.get("/expenses/recent");
